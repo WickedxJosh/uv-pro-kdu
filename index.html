@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1a1d1a">
+<title>UV-PRO KDU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --case:        #2a2e2a;
+    --case-dark:   #1a1d1a;
+    --case-light:  #3b3f3b;
+    --bezel:       #0d0f0d;
+    --screen-bg:   #0a1a0a;
+    --screen-fg:   #4dff6a;
+    --screen-dim:  #2a8a3a;
+    --screen-warn: #ffc14d;
+    --screen-tx:   #ff4d4d;
+    --key:         #1e211e;
+    --key-face:    #2f332f;
+    --key-text:    #c8d0c8;
+    --key-accent:  #4dff6a;
+    --key-press:   #151715;
+    --ptt-red:     #8b1a1a;
+    --ptt-red-hot: #e63838;
+    --soft-label:  #b8c0b8;
+    --led-off:     #1c2a1c;
+    --led-green:   #4dff6a;
+    --led-amber:   #ffc14d;
+    --led-red:     #ff4d4d;
+  }
+
+- { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+  html, body { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: #000; }
+  body {
+  font-family: ‘Share Tech Mono’, monospace;
+  color: var(–key-text);
+  background: radial-gradient(circle at 30% 20%, #1f231f 0%, #0a0c0a 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+/* =========================================================
+Device chassis — landscape layout
+========================================================= */
+.kdu {
+width: 100%;
+height: 100vh;
+max-height: 480px;
+max-width: 960px;
+background: linear-gradient(145deg, var(–case-light) 0%, var(–case) 35%, var(–case-dark) 100%);
+border-radius: 14px;
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,0.05),
+inset 0 -2px 6px rgba(0,0,0,0.6),
+0 10px 40px rgba(0,0,0,0.8);
+padding: 10px 14px 12px;
+display: grid;
+grid-template-columns: 3fr 5fr 5fr;
+grid-template-rows: auto 1fr;
+grid-template-areas:
+“header header header”
+“mid    left   right”;
+gap: 8px 12px;
+position: relative;
+overflow: hidden;
+}
+
+.header {
+grid-area: header;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0 4px;
+height: 20px;
+}
+.chassis-label {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 9px;
+letter-spacing: 2px;
+color: #555a55;
+text-transform: uppercase;
+display: flex;
+gap: 14px;
+align-items: center;
+}
+.chassis-label .model { color: #8a948a; letter-spacing: 3px; }
+.chassis-label .pn    { color: #4a4e4a; }
+
+.led-strip { display: flex; gap: 12px; }
+.led { display: flex; align-items: center; gap: 4px; }
+.led-light {
+width: 7px; height: 7px;
+border-radius: 50%;
+background: var(–led-off);
+box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+transition: all 0.15s ease;
+}
+.led.power .led-light.on { background: var(–led-green); box-shadow: 0 0 8px var(–led-green), inset 0 0 2px rgba(255,255,255,0.4); }
+.led.bt    .led-light.on { background: #4da0ff;          box-shadow: 0 0 8px #4da0ff,          inset 0 0 2px rgba(255,255,255,0.4); }
+.led.tx    .led-light.on { background: var(–led-red);   box-shadow: 0 0 10px var(–led-red),  inset 0 0 2px rgba(255,255,255,0.4); }
+.led.rx    .led-light.on { background: var(–led-amber); box-shadow: 0 0 8px var(–led-amber), inset 0 0 2px rgba(255,255,255,0.4); }
+.led-label { font-family: ‘Share Tech Mono’, monospace; font-size: 8px; letter-spacing: 1px; color: #6a706a; }
+
+/* =========================================================
+LEFT column: screen + soft keys
+========================================================= */
+.col-left { grid-area: left; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+
+.bezel {
+flex: 1;
+min-height: 0;
+background: var(–bezel);
+border-radius: 6px;
+padding: 6px;
+box-shadow: inset 0 2px 4px rgba(0,0,0,0.9), inset 0 -1px 0 rgba(255,255,255,0.02);
+display: flex;
+}
+
+.screen {
+flex: 1;
+background: radial-gradient(ellipse at center, #0f2510 0%, #081408 100%);
+color: var(–screen-fg);
+font-family: ‘VT323’, monospace;
+border-radius: 3px;
+padding: 8px 12px;
+position: relative;
+overflow: hidden;
+text-shadow: 0 0 4px rgba(77,255,106,0.6);
+box-shadow: inset 0 0 30px rgba(77,255,106,0.08), inset 0 0 2px rgba(0,0,0,0.8);
+}
+.screen::before {
+content: “”;
+position: absolute; inset: 0;
+background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(0,0,0,0.18) 2px, rgba(0,0,0,0.18) 3px);
+pointer-events: none;
+z-index: 2;
+}
+.screen::after {
+content: “”;
+position: absolute; inset: 0;
+background: radial-gradient(ellipse at 50% 40%, rgba(77,255,106,0.05) 0%, transparent 70%);
+pointer-events: none;
+z-index: 1;
+}
+.screen-content { position: relative; z-index: 3; height: 100%; display: flex; flex-direction: column; gap: 2px; }
+
+.status-row {
+display: flex;
+justify-content: space-between;
+font-size: 15px;
+line-height: 1;
+padding-bottom: 3px;
+border-bottom: 1px dashed rgba(77,255,106,0.25);
+}
+.status-row .icons { display: flex; gap: 7px; }
+.status-icon { opacity: 0.35; letter-spacing: 1px; }
+.status-icon.on { opacity: 1; }
+.status-icon.tx { color: var(–screen-tx); text-shadow: 0 0 6px rgba(255,77,77,0.8); }
+.status-icon.rx { color: var(–screen-warn); text-shadow: 0 0 6px rgba(255,193,77,0.8); }
+
+.zone-line {
+display: flex;
+justify-content: space-between;
+font-size: 18px;
+line-height: 1.1;
+color: var(–screen-dim);
+margin-top: 2px;
+}
+.zone-line .ch-num { color: var(–screen-fg); }
+
+.ch-name {
+font-size: 30px;
+line-height: 1;
+letter-spacing: 1px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+margin-top: 4px;
+}
+
+.freq-row {
+display: flex;
+align-items: baseline;
+gap: 6px;
+font-size: 42px;
+line-height: 1;
+margin: 4px 0 2px;
+}
+.freq-row .unit { font-size: 14px; color: var(–screen-dim); }
+
+.info-grid {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr 1fr;
+gap: 0 10px;
+font-size: 14px;
+color: var(–screen-dim);
+margin-top: auto;
+}
+.info-grid span.val { color: var(–screen-fg); }
+
+.entry-line { font-size: 16px; color: var(–screen-warn); min-height: 18px; }
+.entry-line .cursor {
+display: inline-block;
+width: 7px;
+background: var(–screen-warn);
+animation: blink 1s steps(2) infinite;
+margin-left: 2px;
+}
+@keyframes blink { to { visibility: hidden; } }
+
+.soft-labels {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr 1fr;
+gap: 4px;
+font-family: ‘VT323’, monospace;
+font-size: 14px;
+color: var(–screen-fg);
+text-align: center;
+padding-top: 3px;
+border-top: 1px dashed rgba(77,255,106,0.25);
+}
+
+.soft-keys {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr 1fr;
+gap: 5px;
+}
+.soft-key {
+background: linear-gradient(180deg, var(–case-light) 0%, var(–key) 100%);
+border: 1px solid #0a0c0a;
+border-radius: 4px;
+height: 22px;
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 8px;
+color: var(–soft-label);
+letter-spacing: 1px;
+cursor: pointer;
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.5);
+transition: transform 0.04s ease, filter 0.04s ease;
+}
+.soft-key:active, .soft-key.pressed { transform: translateY(1px); filter: brightness(0.7); }
+
+/* =========================================================
+MIDDLE column: nav cluster + function 2x2
+========================================================= */
+.col-mid { grid-area: mid; display: grid; grid-template-rows: 1fr auto; gap: 6px; min-height: 0; }
+
+.nav-cluster {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+grid-template-rows: 1fr 1fr 1fr;
+gap: 4px;
+}
+.nav-btn, .side-btn {
+background: linear-gradient(180deg, var(–case-light) 0%, var(–key-face) 100%);
+border: 1px solid #0a0c0a;
+border-radius: 5px;
+color: var(–key-text);
+font-family: ‘Share Tech Mono’, monospace;
+cursor: pointer;
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 3px rgba(0,0,0,0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+transition: transform 0.04s ease, filter 0.04s ease;
+}
+.nav-btn { font-size: 16px; }
+.side-btn {
+font-size: 10px;
+letter-spacing: 1px;
+flex-direction: column;
+line-height: 1.1;
+}
+.side-btn small { font-size: 7px; color: #8a948a; letter-spacing: 1px; }
+.nav-btn:active, .nav-btn.pressed, .side-btn:active, .side-btn.pressed { transform: translateY(1px); filter: brightness(0.7); }
+.nav-btn.ok {
+background: linear-gradient(180deg, #3a4a3a 0%, #1e2a1e 100%);
+color: var(–screen-fg);
+font-size: 11px;
+letter-spacing: 1px;
+}
+
+.func-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.func-btn {
+background: linear-gradient(180deg, var(–case-light) 0%, var(–key) 100%);
+border: 1px solid #0a0c0a;
+border-radius: 5px;
+color: var(–key-text);
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 9px;
+letter-spacing: 1px;
+cursor: pointer;
+min-height: 24px;
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 3px rgba(0,0,0,0.5);
+}
+.func-btn:active, .func-btn.pressed { transform: translateY(1px); filter: brightness(0.7); }
+
+/* =========================================================
+RIGHT column: keypad + PTT
+========================================================= */
+.col-right { grid-area: right; display: grid; grid-template-rows: 1fr auto; gap: 6px; min-height: 0; }
+
+.keypad {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+grid-template-rows: repeat(4, 1fr);
+gap: 5px;
+min-height: 0;
+}
+.key {
+background: linear-gradient(180deg, var(–case-light) 0%, var(–key) 100%);
+border: 1px solid #0a0c0a;
+border-radius: 6px;
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.4), 0 2px 3px rgba(0,0,0,0.6);
+font-family: ‘Share Tech Mono’, monospace;
+color: var(–key-text);
+cursor: pointer;
+padding: 4px 4px 3px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+transition: transform 0.04s ease, filter 0.04s ease;
+}
+.key:active, .key.pressed {
+transform: translateY(1px);
+filter: brightness(0.65);
+background: linear-gradient(180deg, var(–key-press) 0%, #0a0c0a 100%);
+}
+.key .num { font-size: 18px; line-height: 1; font-weight: 700; color: var(–key-accent); text-shadow: 0 0 4px rgba(77,255,106,0.3); }
+.key .alpha { font-size: 7px; letter-spacing: 1px; color: #8a948a; margin-top: 2px; }
+.key.special .num { color: var(–key-text); font-size: 14px; }
+
+.ptt {
+background: radial-gradient(circle at 40% 30%, #a52121 0%, var(–ptt-red) 60%, #5a0e0e 100%);
+border: 2px solid #2a0808;
+border-radius: 8px;
+color: #ffe6e6;
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 16px;
+letter-spacing: 6px;
+font-weight: 700;
+cursor: pointer;
+text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+box-shadow: inset 0 2px 0 rgba(255,255,255,0.15), inset 0 -3px 6px rgba(0,0,0,0.5), 0 3px 6px rgba(0,0,0,0.7);
+min-height: 90px;
+transition: all 0.06s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.ptt:active, .ptt.pressed {
+background: radial-gradient(circle at 40% 30%, var(–ptt-red-hot) 0%, #c22020 60%, #7a1414 100%);
+transform: translateY(2px);
+box-shadow: inset 0 0 20px rgba(255,80,80,0.5), inset 0 2px 4px rgba(0,0,0,0.4), 0 0 20px rgba(255,77,77,0.6);
+}
+
+/* =========================================================
+Connect overlay
+========================================================= */
+.connect-overlay {
+position: absolute;
+inset: 0;
+background: rgba(10,12,10,0.92);
+backdrop-filter: blur(3px);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 14px;
+padding: 20px;
+z-index: 100;
+font-family: ‘Share Tech Mono’, monospace;
+text-align: center;
+}
+.connect-overlay.hidden { display: none; }
+.connect-overlay h1 {
+font-family: ‘VT323’, monospace;
+font-size: 28px;
+color: var(–screen-fg);
+margin: 0;
+letter-spacing: 3px;
+text-shadow: 0 0 10px rgba(77,255,106,0.5);
+}
+.connect-overlay p {
+font-size: 10px;
+color: #8a948a;
+max-width: 380px;
+letter-spacing: 1px;
+line-height: 1.5;
+margin: 0;
+}
+.overlay-buttons { display: flex; gap: 10px; }
+.overlay-btn {
+background: linear-gradient(180deg, #3a4a3a 0%, #1e2a1e 100%);
+border: 1px solid var(–screen-fg);
+border-radius: 4px;
+color: var(–screen-fg);
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 11px;
+letter-spacing: 2px;
+padding: 10px 20px;
+cursor: pointer;
+box-shadow: 0 0 12px rgba(77,255,106,0.25);
+}
+.overlay-btn:active { filter: brightness(0.7); }
+.overlay-btn.secondary { border-color: #6a706a; color: #b8c0b8; box-shadow: none; }
+
+/* Debug log drawer */
+.log-drawer {
+position: absolute;
+bottom: 0; left: 0; right: 0;
+background: #0a0c0a;
+border-top: 1px solid #2a2e2a;
+max-height: 40%;
+overflow-y: auto;
+transform: translateY(100%);
+transition: transform 0.2s ease;
+z-index: 50;
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 10px;
+padding: 8px;
+}
+.log-drawer.open { transform: translateY(0); }
+.log-drawer .entry { color: #8a948a; line-height: 1.4; }
+.log-drawer .entry.err { color: var(–screen-tx); }
+.log-drawer .entry.ok  { color: var(–screen-fg); }
+.log-toggle {
+position: absolute;
+bottom: 4px; right: 6px;
+font-size: 8px;
+color: #4a4e4a;
+background: none;
+border: none;
+cursor: pointer;
+z-index: 51;
+letter-spacing: 1px;
+}
+
+/* =========================================================
+Portrait fallback: nudge the user to rotate
+========================================================= */
+.rotate-hint {
+position: fixed;
+inset: 0;
+background: #0a0c0a;
+z-index: 200;
+display: none;
+align-items: center;
+justify-content: center;
+flex-direction: column;
+gap: 16px;
+padding: 30px;
+text-align: center;
+}
+.rotate-hint h2 {
+font-family: ‘VT323’, monospace;
+font-size: 28px;
+color: var(–screen-fg);
+margin: 0;
+letter-spacing: 2px;
+text-shadow: 0 0 10px rgba(77,255,106,0.5);
+}
+.rotate-hint p {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 11px;
+color: #8a948a;
+letter-spacing: 1px;
+margin: 0;
+max-width: 260px;
+}
+.rotate-icon {
+font-size: 48px;
+color: var(–screen-fg);
+animation: rot 2.2s ease-in-out infinite;
+transform-origin: center;
+}
+@keyframes rot {
+0%,20%   { transform: rotate(0deg); }
+50%,70%  { transform: rotate(-90deg); }
+100%     { transform: rotate(-90deg); }
+}
+@media (orientation: portrait) and (max-width: 700px) {
+.rotate-hint { display: flex; }
+}
+
+/* Tighten up on short landscape viewports (phones) */
+@media (orientation: landscape) and (max-height: 420px) {
+.kdu { padding: 6px 10px 8px; gap: 5px 10px; }
+.header { height: 16px; }
+.chassis-label { font-size: 8px; }
+.ch-name { font-size: 24px; }
+.freq-row { font-size: 34px; }
+.info-grid { font-size: 12px; }
+.zone-line { font-size: 15px; }
+.status-row { font-size: 13px; }
+.key .num { font-size: 16px; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="kdu" id="kdu">
+
+  <div class="header">
+    <div class="chassis-label">
+      <span class="model">UV-PRO &middot; KDU</span>
+      <span class="pn">P/N 0372-KDU-01</span>
+    </div>
+    <div class="led-strip">
+      <div class="led power"><div class="led-light" id="led-pwr"></div><div class="led-label">PWR</div></div>
+      <div class="led bt"><div class="led-light" id="led-bt"></div><div class="led-label">BT</div></div>
+      <div class="led rx"><div class="led-light" id="led-rx"></div><div class="led-label">RX</div></div>
+      <div class="led tx"><div class="led-light" id="led-tx"></div><div class="led-label">TX</div></div>
+    </div>
+  </div>
+
+  <!-- LEFT: screen + soft keys -->
+
+  <div class="col-left">
+    <div class="bezel">
+      <div class="screen">
+        <div class="screen-content">
+          <div class="status-row">
+            <div class="icons">
+              <span class="status-icon on" id="ic-bt">BT</span>
+              <span class="status-icon" id="ic-gps">GPS</span>
+              <span class="status-icon" id="ic-scan">SCN</span>
+              <span class="status-icon" id="ic-tx">TX</span>
+              <span class="status-icon" id="ic-rx">RX</span>
+            </div>
+            <div id="batt">BAT 87%</div>
+          </div>
+
+```
+      <div class="zone-line">
+        <span>ZN <span id="zone">01</span></span>
+        <span>CH <span class="ch-num" id="chnum">03</span>/16</span>
+      </div>
+
+      <div class="ch-name" id="chname">SIMPLEX 1</div>
+
+      <div class="freq-row">
+        <span id="freq">146.52000</span>
+        <span class="unit">MHz</span>
+      </div>
+
+      <div class="info-grid">
+        <span>TONE <span class="val" id="tone">NONE</span></span>
+        <span>PWR <span class="val" id="pwr">HIGH</span></span>
+        <span>MODE <span class="val" id="mode">FM</span></span>
+        <span>BW <span class="val" id="bw">25K</span></span>
+      </div>
+
+      <div class="entry-line" id="entry">&nbsp;</div>
+
+      <div class="soft-labels">
+        <span id="sl1">ZONE</span>
+        <span id="sl2">SCAN</span>
+        <span id="sl3">MENU</span>
+        <span id="sl4">VFO</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="soft-keys">
+  <button class="soft-key" data-soft="1">SK1</button>
+  <button class="soft-key" data-soft="2">SK2</button>
+  <button class="soft-key" data-soft="3">SK3</button>
+  <button class="soft-key" data-soft="4">SK4</button>
+</div>
+```
+
+  </div>
+
+  <!-- MIDDLE: nav cluster + function 2x2 -->
+
+  <div class="col-mid">
+    <div class="nav-cluster">
+      <button class="side-btn" data-cmd="chup">CH <small>+</small></button>
+      <button class="nav-btn"  data-nav="up">&#9650;</button>
+      <button class="side-btn" data-cmd="znup">ZN <small>+</small></button>
+
+```
+  <button class="nav-btn"    data-nav="left">&#9664;</button>
+  <button class="nav-btn ok" data-nav="ok">SEL</button>
+  <button class="nav-btn"    data-nav="right">&#9654;</button>
+
+  <button class="side-btn" data-cmd="chdn">CH <small>&minus;</small></button>
+  <button class="nav-btn"  data-nav="down">&#9660;</button>
+  <button class="side-btn" data-cmd="zndn">ZN <small>&minus;</small></button>
+</div>
+
+<div class="func-grid">
+  <button class="func-btn" data-cmd="mon">MON</button>
+  <button class="func-btn" data-cmd="em">EMRG</button>
+  <button class="func-btn" data-cmd="back">BACK</button>
+  <button class="func-btn" data-cmd="pwr">PWR</button>
+</div>
+```
+
+  </div>
+
+  <!-- RIGHT: keypad + PTT -->
+
+  <div class="col-right">
+    <div class="keypad">
+      <button class="key" data-digit="1"><span class="num">1</span><span class="alpha">&nbsp;</span></button>
+      <button class="key" data-digit="2"><span class="num">2</span><span class="alpha">ABC</span></button>
+      <button class="key" data-digit="3"><span class="num">3</span><span class="alpha">DEF</span></button>
+      <button class="key" data-digit="4"><span class="num">4</span><span class="alpha">GHI</span></button>
+      <button class="key" data-digit="5"><span class="num">5</span><span class="alpha">JKL</span></button>
+      <button class="key" data-digit="6"><span class="num">6</span><span class="alpha">MNO</span></button>
+      <button class="key" data-digit="7"><span class="num">7</span><span class="alpha">PQRS</span></button>
+      <button class="key" data-digit="8"><span class="num">8</span><span class="alpha">TUV</span></button>
+      <button class="key" data-digit="9"><span class="num">9</span><span class="alpha">WXYZ</span></button>
+      <button class="key special" data-digit="*"><span class="num">*</span><span class="alpha">CLR</span></button>
+      <button class="key" data-digit="0"><span class="num">0</span><span class="alpha">&nbsp;</span></button>
+      <button class="key special" data-digit="#"><span class="num">#</span><span class="alpha">ENT</span></button>
+    </div>
+
+```
+<button class="ptt" id="ptt">PTT</button>
+```
+
+  </div>
+
+  <!-- Connect overlay shown before a connection is made -->
+
+  <div class="connect-overlay" id="overlay">
+    <h1>UV-PRO KDU</h1>
+    <p>
+      REMOTE KEYPAD &amp; DISPLAY UNIT<br>
+      PAIR YOUR BTECH UV-PRO VIA BLUETOOTH &middot; OR USE DEMO MODE
+    </p>
+    <div class="overlay-buttons">
+      <button class="overlay-btn" id="btn-connect">CONNECT RADIO</button>
+      <button class="overlay-btn secondary" id="btn-demo">DEMO MODE</button>
+    </div>
+    <p style="font-size:9px;opacity:0.6">REQUIRES CHROME / EDGE &middot; BLUETOOTH ENABLED</p>
+  </div>
+
+  <!-- Debug log drawer -->
+
+<button class="log-toggle" id="log-toggle">LOG</button>
+
+  <div class="log-drawer" id="log"></div>
+</div>
+
+<!-- Portrait rotation hint -->
+
+<div class="rotate-hint" id="rotate-hint">
+  <div class="rotate-icon">&#x21BA;</div>
+  <h2>ROTATE TO LANDSCAPE</h2>
+  <p>THE KDU IS DESIGNED FOR HORIZONTAL ORIENTATION.<br>TURN YOUR DEVICE SIDEWAYS.</p>
+</div>
+
+<script>
+/* =========================================================================
+   UV-PRO KDU  —  single-file web app  (landscape layout)
+   =========================================================================
+   This is a scaffold:
+     1. Renders a KDU-style interface (display + keypad + nav + PTT).
+     2. Runs in DEMO MODE with simulated radio data so you can see it work.
+     3. Has Web Bluetooth hooks to eventually talk to a real UV-Pro.
+
+   Protocol references:
+     https://github.com/khusmann/benlink           (Python reference)
+     https://github.com/SarahRoseLives/flutter_benlink   (Dart port)
+
+   Spots marked  TODO-PROTOCOL  are where the real byte sequences go.
+   ========================================================================= */
+
+/* ---------- State ---------- */
+const state = {
+  connected:  false,
+  demoMode:   false,
+  zone:       1,
+  channel:    3,
+  channelMax: 16,
+  zoneMax:    8,
+  chName:     'SIMPLEX 1',
+  freq:       146.52,
+  tone:       'NONE',
+  power:      'HIGH',
+  mode:       'FM',
+  bandwidth:  '25K',
+  batteryPct: 87,
+  transmitting: false,
+  receiving:  false,
+  gps:        false,
+  scan:       false,
+  entryBuf:   '',
+  entryMode:  null,
+};
+
+const DEMO_CHANNELS = [
+  { name: 'SIMPLEX 1',    freq: 146.52000, tone: 'NONE' },
+  { name: 'SIMPLEX 2',    freq: 146.55000, tone: 'NONE' },
+  { name: 'SIMPLEX 3',    freq: 146.58000, tone: 'NONE' },
+  { name: 'REP 146.94',   freq: 146.94000, tone: '127.3' },
+  { name: 'REP 147.00',   freq: 147.00000, tone: '100.0' },
+  { name: 'REP 147.15',   freq: 147.15000, tone: '88.5'  },
+  { name: 'GMRS 15',      freq: 462.55000, tone: 'NONE' },
+  { name: 'GMRS 16',      freq: 462.57500, tone: 'NONE' },
+  { name: 'MURS 1',       freq: 151.82000, tone: 'NONE' },
+  { name: 'MURS 3',       freq: 151.94000, tone: 'NONE' },
+  { name: 'FRS 1',        freq: 462.56250, tone: 'NONE' },
+  { name: 'FRS 7',        freq: 462.71250, tone: 'NONE' },
+  { name: 'WX1',          freq: 162.55000, tone: 'NONE' },
+  { name: 'WX2',          freq: 162.40000, tone: 'NONE' },
+  { name: 'VFO A',        freq: 145.00000, tone: 'NONE' },
+  { name: 'VFO B',        freq: 440.00000, tone: 'NONE' },
+];
+
+/* ---------- Logging ---------- */
+const logEl = document.getElementById('log');
+function log(msg, cls = '') {
+  const t = new Date().toLocaleTimeString();
+  const line = document.createElement('div');
+  line.className = 'entry ' + cls;
+  line.textContent = '[' + t + '] ' + msg;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+document.getElementById('log-toggle').addEventListener('click', () => {
+  logEl.classList.toggle('open');
+});
+
+/* ========================================================================
+   BLUETOOTH LAYER
+   ======================================================================== */
+
+/* --- TODO-PROTOCOL: fill in after nRF Connect discovery --- */
+const SERVICE_UUID     = '0000ffe0-0000-1000-8000-00805f9b34fb';   // PLACEHOLDER
+const CHAR_WRITE_UUID  = '0000ffe1-0000-1000-8000-00805f9b34fb';   // PLACEHOLDER
+const CHAR_NOTIFY_UUID = '0000ffe2-0000-1000-8000-00805f9b34fb';   // PLACEHOLDER
+
+let btDevice = null;
+let btServer = null;
+let btWriteChar = null;
+let btNotifyChar = null;
+
+async function connectRadio() {
+  if (!navigator.bluetooth) {
+    log('Web Bluetooth not supported in this browser', 'err');
+    alert('Web Bluetooth is not supported here.\nUse Chrome or Edge on desktop, or Chrome on Android.');
+    return;
+  }
+  try {
+    log('Requesting Bluetooth device...');
+    btDevice = await navigator.bluetooth.requestDevice({
+      acceptAllDevices: true,
+      optionalServices: [SERVICE_UUID]
+    });
+    log('Device selected: ' + (btDevice.name || btDevice.id), 'ok');
+    btDevice.addEventListener('gattserverdisconnected', onDisconnected);
+
+    log('Connecting GATT...');
+    btServer = await btDevice.gatt.connect();
+    log('GATT connected', 'ok');
+
+    log('Getting primary service ' + SERVICE_UUID);
+    const service = await btServer.getPrimaryService(SERVICE_UUID);
+
+    btWriteChar  = await service.getCharacteristic(CHAR_WRITE_UUID);
+    btNotifyChar = await service.getCharacteristic(CHAR_NOTIFY_UUID);
+
+    await btNotifyChar.startNotifications();
+    btNotifyChar.addEventListener('characteristicvaluechanged', onRadioNotify);
+    log('Notifications started', 'ok');
+
+    state.connected = true;
+    state.demoMode  = false;
+    hideOverlay();
+    setLed('bt', true);
+    setLed('pwr', true);
+
+    // TODO-PROTOCOL: request initial radio state
+  } catch (err) {
+    log('Connect failed: ' + err.message, 'err');
+  }
+}
+
+function onDisconnected() {
+  log('Radio disconnected', 'err');
+  state.connected = false;
+  setLed('bt', false);
+  setLed('pwr', false);
+  showOverlay();
+}
+
+function onRadioNotify(event) {
+  const data = new Uint8Array(event.target.value.buffer);
+  log('<- RX ' + toHex(data));
+  // TODO-PROTOCOL: parse a Benshi frame and update state
+  render();
+}
+
+async function sendCommand(bytes) {
+  if (state.demoMode) {
+    log('(demo) -> TX ' + toHex(bytes));
+    return;
+  }
+  if (!btWriteChar) { log('Not connected', 'err'); return; }
+  log('-> TX ' + toHex(bytes));
+  try {
+    await btWriteChar.writeValueWithoutResponse(bytes);
+  } catch (err) {
+    log('Write failed: ' + err.message, 'err');
+  }
+}
+
+function toHex(bytes) {
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join(' ');
+}
+
+/* ---- Protocol builder stubs — fill in from benlink's protocol.py ---- */
+function buildGetStatus()          { /* TODO-PROTOCOL */ return new Uint8Array([]); }
+function buildSetChannel(chIdx)    { /* TODO-PROTOCOL */ return new Uint8Array([]); }
+function buildSetVfoFreq(freqHz)   { /* TODO-PROTOCOL */ return new Uint8Array([]); }
+function buildPttOn()              { /* TODO-PROTOCOL */ return new Uint8Array([]); }
+function buildPttOff()             { /* TODO-PROTOCOL */ return new Uint8Array([]); }
+
+/* ========================================================================
+   COMMAND ACTIONS
+   ======================================================================== */
+function cmdChannelUp() {
+  state.channel = state.channel >= state.channelMax ? 1 : state.channel + 1;
+  if (state.demoMode) applyDemoChannel();
+  else sendCommand(buildSetChannel(state.channel));
+  render();
+}
+function cmdChannelDown() {
+  state.channel = state.channel <= 1 ? state.channelMax : state.channel - 1;
+  if (state.demoMode) applyDemoChannel();
+  else sendCommand(buildSetChannel(state.channel));
+  render();
+}
+function cmdZoneUp()   { state.zone = state.zone >= state.zoneMax ? 1 : state.zone + 1; render(); }
+function cmdZoneDown() { state.zone = state.zone <= 1 ? state.zoneMax : state.zone - 1; render(); }
+
+function cmdPttDown() {
+  if (!state.connected && !state.demoMode) return;
+  state.transmitting = true;
+  setLed('tx', true);
+  document.getElementById('ic-tx').classList.add('on', 'tx');
+  if (state.demoMode) log('(demo) PTT pressed — radio would key up', 'ok');
+  else sendCommand(buildPttOn());
+  render();
+}
+function cmdPttUp() {
+  if (!state.transmitting) return;
+  state.transmitting = false;
+  setLed('tx', false);
+  document.getElementById('ic-tx').classList.remove('on', 'tx');
+  if (state.demoMode) log('(demo) PTT released', 'ok');
+  else sendCommand(buildPttOff());
+  render();
+}
+
+function cmdDigit(d) {
+  if (d === '*') {
+    state.entryBuf = '';
+    state.entryMode = null;
+  } else if (d === '#') {
+    if (state.entryBuf.length) {
+      const n = parseInt(state.entryBuf, 10);
+      if (n >= 1 && n <= state.channelMax) {
+        state.channel = n;
+        if (state.demoMode) applyDemoChannel();
+        else sendCommand(buildSetChannel(n));
+      }
+    }
+    state.entryBuf = '';
+    state.entryMode = null;
+  } else {
+    if (state.entryBuf.length < 3) state.entryBuf += d;
+    state.entryMode = 'channel';
+  }
+  render();
+}
+
+function applyDemoChannel() {
+  const c = DEMO_CHANNELS[(state.channel - 1) % DEMO_CHANNELS.length];
+  state.chName = c.name;
+  state.freq   = c.freq;
+  state.tone   = c.tone;
+}
+
+/* ========================================================================
+   RENDERING
+   ======================================================================== */
+function render() {
+  document.getElementById('zone').textContent   = pad2(state.zone);
+  document.getElementById('chnum').textContent  = pad2(state.channel);
+  document.getElementById('chname').textContent = state.chName;
+  document.getElementById('freq').textContent   = state.freq.toFixed(5);
+  document.getElementById('tone').textContent   = state.tone;
+  document.getElementById('pwr').textContent    = state.power;
+  document.getElementById('mode').textContent   = state.mode;
+  document.getElementById('bw').textContent     = state.bandwidth;
+  document.getElementById('batt').textContent   = 'BAT ' + state.batteryPct + '%';
+
+  const entry = document.getElementById('entry');
+  if (state.entryBuf) {
+    entry.innerHTML = 'CH ' + state.entryBuf + '<span class="cursor">&nbsp;</span>';
+  } else {
+    entry.innerHTML = '&nbsp;';
+  }
+
+  setIcon('ic-bt',   state.connected || state.demoMode);
+  setIcon('ic-gps',  state.gps);
+  setIcon('ic-scan', state.scan);
+  setIcon('ic-tx',   state.transmitting);
+  setIcon('ic-rx',   state.receiving);
+}
+function setIcon(id, on) { document.getElementById(id).classList.toggle('on', on); }
+function setLed(which, on) {
+  const el = document.getElementById('led-' + which);
+  if (el) el.classList.toggle('on', on);
+}
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+/* ========================================================================
+   INPUT WIRING
+   ======================================================================== */
+function wireHold(el, onDown, onUp) {
+  const down = (e) => { e.preventDefault(); el.classList.add('pressed'); onDown && onDown(); };
+  const up   = (e) => { e.preventDefault(); el.classList.remove('pressed'); onUp && onUp(); };
+  el.addEventListener('pointerdown',  down);
+  el.addEventListener('pointerup',    up);
+  el.addEventListener('pointerleave', up);
+  el.addEventListener('pointercancel', up);
+}
+
+document.querySelectorAll('[data-digit]').forEach(btn => {
+  btn.addEventListener('click', () => cmdDigit(btn.dataset.digit));
+});
+
+document.querySelectorAll('[data-cmd]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const c = btn.dataset.cmd;
+    if      (c === 'chup') cmdChannelUp();
+    else if (c === 'chdn') cmdChannelDown();
+    else if (c === 'znup') cmdZoneUp();
+    else if (c === 'zndn') cmdZoneDown();
+    else log('Cmd "' + c + '" not implemented yet');
+  });
+});
+
+document.querySelectorAll('[data-nav]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const n = btn.dataset.nav;
+    if      (n === 'up')    cmdChannelUp();
+    else if (n === 'down')  cmdChannelDown();
+    else if (n === 'left')  cmdZoneDown();
+    else if (n === 'right') cmdZoneUp();
+    else if (n === 'ok')    cmdDigit('#');
+  });
+});
+
+document.querySelectorAll('[data-soft]').forEach(btn => {
+  btn.addEventListener('click', () => log('Soft key ' + btn.dataset.soft + ' pressed'));
+});
+
+wireHold(document.getElementById('ptt'), cmdPttDown, cmdPttUp);
+
+document.getElementById('btn-connect').addEventListener('click', connectRadio);
+document.getElementById('btn-demo').addEventListener('click', enterDemoMode);
+function showOverlay() { document.getElementById('overlay').classList.remove('hidden'); }
+function hideOverlay() { document.getElementById('overlay').classList.add('hidden'); }
+
+function enterDemoMode() {
+  state.demoMode = true;
+  state.connected = false;
+  hideOverlay();
+  setLed('pwr', true);
+  setLed('bt', true);
+  applyDemoChannel();
+  setInterval(() => {
+    if (!state.transmitting && Math.random() < 0.08) {
+      state.receiving = true;
+      setLed('rx', true);
+      render();
+      setTimeout(() => {
+        state.receiving = false;
+        setLed('rx', false);
+        render();
+      }, 600 + Math.random() * 1500);
+    }
+  }, 2000);
+  log('Demo mode active', 'ok');
+  render();
+}
+
+render();
+log('KDU loaded. Press CONNECT or DEMO MODE to begin.');
+</script>
+
+</body>
+</html>
